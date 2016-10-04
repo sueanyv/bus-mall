@@ -42,7 +42,6 @@ function generateImages(){
   for (var i = 0; i < inUse.length; i++) {
     var img = document.getElementById('img' + (i + 1));
     var srcAtt = document.createAttribute('src');
-    console.log(inUse[i].source);
     srcAtt.value = inUse[i].source;
     img.setAttributeNode(srcAtt);
   }
@@ -57,6 +56,20 @@ function generateRand(skipArr){
   return rand;
 };
 
+function showResults(){
+  var finished = new Product('images/finished.jpg');
+  inUse = [finished, finished, finished];
+  generateImages();
+  var messageTag = document.getElementById('messageTag');
+  var totalsMessage = '';
+  for (var i = 0; i < products.length; i++) {
+    totalsMessage += products[i].name + ': ' + products[i].clicks + '/' + products[i].totalPresented + '. | ';
+  }
+  messageTag.textContent = 'You have completed the survey. Thank you for participating! Results: ' + totalsMessage;
+  console.log('Survey complete.');
+  console.log('Results: ' + totalsMessage);
+}
+
 function populateInUse(){
   var skipArr = [];
   turnNumber += 1;
@@ -67,12 +80,26 @@ function populateInUse(){
       i -= 1;
     }
     else{
+      products[rand].totalPresented += 1;
       products[rand].lastPresented = turnNumber;
       inUse[i] = products[rand];
-      console.log(products[rand].name);
     }
   }
   generateImages();
 }
+
+function handleClick(event){
+  var clickedProduct = inUse[event.target.id.slice(3, 4) - 1];
+  clickedProduct.clicks += 1;
+  if(turnNumber >= 25){
+    showResults();
+    body.removeEventListener('click', handleClick);
+  }
+  else{
+    populateInUse();
+    console.log(clickedProduct.name + ' ' + clickedProduct.clicks + '/' + clickedProduct.totalPresented);
+    console.log(26 - turnNumber + ' choices left.');
+  }
+}
 populateInUse();
-body.addEventListener('click', populateInUse);
+body.addEventListener('click', handleClick);
