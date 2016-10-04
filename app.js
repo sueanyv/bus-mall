@@ -1,47 +1,78 @@
+'use strict';
+
 var products = [
-  new Product('bag', 'bag.jpg'),
-  new Product('bananna', 'banana.jpg'),
-  new Product('bathroom', 'bathroom.jpg'),
-  new Product('boots', 'boots.jpg'),
-  new Product('breakfast', 'breakfast.jpg'),
-  new Product('bubblegum', 'bubblegum.jpg'),
-  new Product('chair', 'chair.jpg'),
-  new Product('cthulhu', 'cthulhu.jpg'),
-  new Product('dog-duck', 'dog-duck.jpg'),
-  new Product('dragon', 'dragon.jpg'),
-  new Product('pen', 'pen.jpg'),
-  new Product('pet-sweep', 'pet-sweep.jpg'),
-  new Product('scissors', 'scissors.jpg'),
-  new Product('shark', 'shark.jpg'),
-  new Product('sweep', 'sweep.png'),
-  new Product('tauntaun', 'tauntaun.jpg'),
-  new Product('unicorn', 'unicorn.jpg'),
-  new Product('usb', 'usb.gif'),
-  new Product('water-can', 'water-can.jpg'),
-  new Product('wine-glass', 'wine-glass.jpg')
+  new Product('images/bag.jpg'),
+  new Product('images/banana.jpg'),
+  new Product('images/bathroom.jpg'),
+  new Product('images/boots.jpg'),
+  new Product('images/breakfast.jpg'),
+  new Product('images/bubblegum.jpg'),
+  new Product('images/chair.jpg'),
+  new Product('images/cthulhu.jpg'),
+  new Product('images/dog-duck.jpg'),
+  new Product('images/dragon.jpg'),
+  new Product('images/pen.jpg'),
+  new Product('images/pet-sweep.jpg'),
+  new Product('images/scissors.jpg'),
+  new Product('images/shark.jpg'),
+  new Product('images/sweep.png'),
+  new Product('images/tauntaun.jpg'),
+  new Product('images/unicorn.jpg'),
+  new Product('images/usb.gif'),
+  new Product('images/water-can.jpg'),
+  new Product('images/wine-glass.jpg')
 ];
-var body = document.getElementById('body');
 for (var i = 0; i < products.length; i++) {
   products[i].index = i;
-  var product = document.createElement('img');
-  var srcAtt = document.createAttribute('src');
-  srcAtt.value = products[i].source;
-  product.setAttributeNode(srcAtt);
-  body.appendChild(product);
 }
-// for (var i = 0; i < products.length; i++) {
-//   products[i].index = i;
-// }
-var inUse = [];
-var totalclicks = 0;
+var inUse = [{}, {}, {}];
+var turnNumber = 0;
+var body = document.getElementById('body');
 
-function Product(name, source, index){
-  this.name = name;
+function Product(source, index){
   this.source = source;
   this.index = index;
+  this.name = source.slice(7, source.length - 4);
   this.totalPresented = 0;
   this.clicks = 0;
+  this.lastPresented = 0;
 }
 
-function displayProduct(){};
-function clickImage(event){};
+function generateImages(){
+  for (var i = 0; i < inUse.length; i++) {
+    var img = document.getElementById('img' + (i + 1));
+    var srcAtt = document.createAttribute('src');
+    console.log(inUse[i].source);
+    srcAtt.value = inUse[i].source;
+    img.setAttributeNode(srcAtt);
+  }
+}
+function generateRand(skipArr){
+  var rand = Math.floor(Math.random() * (products.length - skipArr.length));
+  for (var i = 0; i < skipArr.length; i++) {
+    if(rand >= skipArr[i]){
+      rand += 1;
+    }
+  }
+  return rand;
+};
+
+function populateInUse(){
+  var skipArr = [];
+  turnNumber += 1;
+  for (var i = 0; i < inUse.length; i++) {
+    var rand = generateRand(skipArr);
+    skipArr.push(rand);
+    if(products[rand].lastPresented >= (turnNumber - 1) && turnNumber > 1){
+      i -= 1;
+    }
+    else{
+      products[rand].lastPresented = turnNumber;
+      inUse[i] = products[rand];
+      console.log(products[rand].name);
+    }
+  }
+  generateImages();
+}
+populateInUse();
+body.addEventListener('click', populateInUse);
