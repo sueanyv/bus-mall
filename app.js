@@ -29,6 +29,39 @@ var inUse = [{}, {}, {}];
 var turnNumber = 0;
 var body = document.getElementById('body');
 
+
+function displayChart(){
+  var chartBackgroundColors = [];
+  var chartHoverColors = [];
+  for (var i = 0; i < products.length; i++) {
+    chartBackgroundColors[i] = '#ff0000';
+    chartHoverColors[i] = '#9900ff';
+  }
+  var data = {
+    labels: products.map(function(product) {return product.name;}),
+    datasets: [
+      {
+        data: products.map(function(product) {return product.clicks;}),
+        backgroundColor: chartBackgroundColors,
+        hoverBackgroundColor: chartHoverColors
+      }
+    ]
+  };
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
+  var dataChart = new Chart(context, {
+    type: 'bar',
+    data: data,
+    options: {responsive: false},
+    scales: [{
+      ticks: {
+        beginAtZero:true
+      }
+    }]
+  });
+  canvas.style.visibility = 'visible';
+}
+
 function Product(source, index){
   this.source = source;
   this.index = index;
@@ -43,7 +76,10 @@ function generateImages(){
     var img = document.getElementById('img' + (i + 1));
     var srcAtt = document.createAttribute('src');
     srcAtt.value = inUse[i].source;
+    var altAtt = document.createAttribute('alt');
+    altAtt.value = inUse[i].name;
     img.setAttributeNode(srcAtt);
+    img.setAttributeNode(altAtt);
   }
 }
 function generateRand(skipArr){
@@ -93,12 +129,14 @@ function handleClick(event){
   clickedProduct.clicks += 1;
   if(turnNumber >= 25){
     showResults();
+    displayChart();
     body.removeEventListener('click', handleClick);
   }
   else{
     populateInUse();
     console.log(clickedProduct.name + ' ' + clickedProduct.clicks + '/' + clickedProduct.totalPresented);
     console.log(26 - turnNumber + ' choices left.');
+    console.log(event.target.id);
   }
 }
 populateInUse();
