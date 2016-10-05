@@ -29,26 +29,57 @@ var inUse = [{}, {}, {}];
 var turnNumber = 0;
 var body = document.getElementById('body');
 
+function prepChart(){
+  for (var i = 0; i < products.length; i++) {
+    products[i].setPopularity();
+  }
+  var comparePopularity = function(productA, productB){
+    if(productA.popularity > productB.popularity){
+      return -1;
+    }
+    else if(productA.popularity < productB.popularity){
+      return 1;
+    }
+    else{
+      if(productA.totalPresented > productB.totalPresented){
+        return -1;
+      }
+      else if(productA.totalPresented < productB.totalPresented){
+        return 1;
+      }
+      else return 0;
+    }
+  };
+  products.sort(comparePopularity);
+}
 
 function displayChart(){
-  var chartBackgroundColors = [];
-  var chartHoverColors = [];
+  prepChart();
+  var clickBackgroundColors = [];
+  var presentedBackgroundColors = [];
+  var hoverColors = [];
   for (var i = 0; i < products.length; i++) {
-    chartBackgroundColors[i] = '#ff0000';
-    chartHoverColors[i] = '#9900ff';
+    clickBackgroundColors[i] = '#ff0000';
+    presentedBackgroundColors[i] = '#0000ff';
+    hoverColors[i] = '#9900ff';
   }
   var data = {
     labels: products.map(function(product) {return product.name;}),
     datasets: [
       {
         data: products.map(function(product) {return product.clicks;}),
-        backgroundColor: chartBackgroundColors,
-        hoverBackgroundColor: chartHoverColors
+        backgroundColor: clickBackgroundColors,
+        hoverBackgroundColor: hoverColors
+      },
+      {
+        data: products.map(function(product) {return product.totalPresented;}),
+        backgroundColor: presentedBackgroundColors,
+        hoverBackgroundColor: hoverColors
       }
-    ]
+    ],
   };
-  var canvas = document.getElementById('canvas');
-  var context = canvas.getContext('2d');
+  var canvas1 = document.getElementById('canvas1');
+  var context = canvas1.getContext('2d');
   var dataChart = new Chart(context, {
     type: 'bar',
     data: data,
@@ -59,7 +90,7 @@ function displayChart(){
       }
     }]
   });
-  canvas.style.visibility = 'visible';
+  canvas1.style.visibility = 'visible';
 }
 
 function Product(source, index){
@@ -69,6 +100,14 @@ function Product(source, index){
   this.totalPresented = 0;
   this.clicks = 0;
   this.lastPresented = 0;
+  this.popularity = 0;
+  this.setPopularity = function(){
+    if(this.totalPresented === 0){
+      this.popularity = 0;
+    }else{
+      this.popularity = this.clicks / this.totalPresented;
+    }
+  };
 }
 
 function generateImages(){
@@ -99,7 +138,7 @@ function showResults(){
   var messageTag = document.getElementById('messageTag');
   var totalsMessage = '';
   for (var i = 0; i < products.length; i++) {
-    totalsMessage += products[i].name + ': ' + products[i].clicks + '/' + products[i].totalPresented + '. | ';
+    totalsMessage += products[i].name + ': ' + products[i].clicks + '/' + products[i].totalPresented + '. (' + products[i].popularity.toFixed(2) + ') | ';
   }
   messageTag.textContent = 'You have completed the survey. Thank you for participating! Results: ' + totalsMessage;
   console.log('Survey complete.');
@@ -128,8 +167,8 @@ function handleClick(event){
   var clickedProduct = inUse[event.target.id.slice(3, 4) - 1];
   clickedProduct.clicks += 1;
   if(turnNumber >= 25){
-    showResults();
     displayChart();
+    showResults();
     body.removeEventListener('click', handleClick);
   }
   else{
