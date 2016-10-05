@@ -27,6 +27,11 @@ var inUse = [{}, {}, {}];
 var turnNumber = 0;
 var section = document.getElementById('imgs');
 var submitButton = document.getElementById('submitButton');
+var canvas1 = document.getElementById('canvas1');
+var canvas2 = document.getElementById('canvas2');
+var chartForm = document.getElementById('chartForm');
+var chart1Title = document.getElementById('chart1Title');
+var chart2Title = document.getElementById('chart2Title');
 
 // constructors
 function Product(source, index){
@@ -186,6 +191,20 @@ function displayChart2(hoverColors, popularityBackgroundColors){
   });
   canvas.style.visibility = 'visible';
 }
+function hideCharts(){
+  canvas1.style.visibility = 'hidden';
+  canvas2.style.visibility = 'hidden';
+  chartForm.style.visibility = 'hidden';
+  chart1Title.style.visibility = 'hidden';
+  chart2Title.style.visibility = 'hidden';
+}
+function showCharts(){
+  canvas1.style.visibility = 'visible';
+  canvas2.style.visibility = 'visible';
+  chartForm.style.visibility = 'visible';
+  chart1Title.style.visibility = 'visible';
+  chart2Title.style.visibility = 'visible';
+}
 
 // other functions
 function generateImages(){
@@ -236,6 +255,7 @@ function showResults(){
   }
   console.log('Survey complete.');
   console.log('Results: ' + totalsMessage);
+  showCharts();
 }
 
 // event handlers
@@ -245,7 +265,7 @@ function handleImageClick(event){
   if(turnNumber >= 25){
     handleSubmitButtonClick();
     showResults();
-    body.removeEventListener('click', handleClick);
+    body.removeEventListener('click', handleImageClick);
   }
   else{
     populateInUseArray();
@@ -273,9 +293,11 @@ function handleSubmitButtonClick(){
 }
 
 // run script
+hideCharts();
 for (var i = 0; i < products.length; i++) {
   products[i].index = i;
 }
 populateInUseArray();
+generateImages();
 section.addEventListener('click', handleImageClick);
 submitButton.addEventListener('click', handleSubmitButtonClick);

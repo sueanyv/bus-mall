@@ -1,12 +1,12 @@
 img {
   position: relative;
-  left: 90px;
-  top: 90px;
   max-width: 180px;
   max-height: 180px;
+  margin: 10px;
 }
 
 .imgDiv {
+  border: 3px solid #555555;
   width: 200px;
   height: 200px;
 }
