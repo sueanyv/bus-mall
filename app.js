@@ -78,10 +78,10 @@ var compareClicked = function(productA, productB){
   }
   else{
     if(productA.totalPresented > productB.totalPresented){
-      return -1;
+      return 1;
     }
     else if(productA.totalPresented < productB.totalPresented){
-      return 1;
+      return -1;
     }
     else return 0;
   }
@@ -141,11 +141,13 @@ function displayChart1(clickBackgroundColors, hoverColors, presentedBackgroundCo
     labels: products.map(function(product) {return product.name;}),
     datasets: [
       {
+        label: 'Times Clicked',
         data: products.map(function(product) {return product.clicks;}),
         backgroundColor: clickBackgroundColors,
         hoverBackgroundColor: hoverColors
       },
       {
+        label: 'Times Presented',
         data: products.map(function(product) {return product.totalPresented;}),
         backgroundColor: presentedBackgroundColors,
         hoverBackgroundColor: hoverColors
@@ -171,7 +173,8 @@ function displayChart2(hoverColors, popularityBackgroundColors){
     labels: products.map(function(product) {return product.name;}),
     datasets: [
       {
-        data: products.map(function(product) {return product.popularity;}),
+        label: 'Average Popularity',
+        data: products.map(function(product) {return product.popularity * 100;}),
         backgroundColor: popularityBackgroundColors,
         hoverBackgroundColor: hoverColors
       }

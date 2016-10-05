@@ -17,10 +17,6 @@ section {
   align-content: space-between;
 }
 
-canvas {
-  visibility: hidden;
-}
-
 p#message {
   visibility: hidden;
 }
