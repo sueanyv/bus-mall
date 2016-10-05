@@ -1,7 +1,30 @@
 img {
+  position: relative;
+  left: 90px;
+  top: 90px;
+  max-width: 180px;
+  max-height: 180px;
+}
+
+.imgDiv {
   width: 200px;
+  height: 200px;
+}
+
+section {
+  width: 600px;
+  display: flex;
+  align-content: space-between;
 }
 
 canvas {
   visibility: hidden;
+}
+
+p#message {
+  visibility: hidden;
+}
+
+form {
+  float: right;
 }
